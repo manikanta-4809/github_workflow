@@ -1,3 +1,9 @@
+const express = require('express');
+const app = express();
+const PORT = 3000;
 app.get('/', (req, res) => {
-  res.send('Hello from my NEW EC2 CI/CD pipeline!');
+  res.send('Hello from my FIXED CI/CD pipeline!');
+});
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

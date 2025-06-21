@@ -1,9 +1,12 @@
 name: CI/CD Pipeline - Build, Push, and Deploy
+
 on:
   push:
     branches: [ "main" ]
+
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
+
 jobs:
   build-and-push:
     name: Build and Push to GHCR
@@ -35,13 +38,14 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
   deploy-to-ec2:
     name: Deploy to AWS EC2
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to EC2 instance
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}

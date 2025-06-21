@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: CI/CD Pipeline - Build, Push, and Deploy
 on:
   push:
     branches: [ "main" ]
@@ -35,3 +35,21 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  deploy-to-ec2:
+    name: Deploy to AWS EC2
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 instance
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            sudo docker pull ${{ env.IMAGE_NAME }}:latest
+            sudo docker stop my-node-container || true
+            sudo docker rm my-node-container || true
+            sudo docker run -d --name my-node-container -p 3000:3000 ${{ env.IMAGE_NAME }}:latest

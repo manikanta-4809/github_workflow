@@ -1,16 +1,9 @@
 name: Manual and Scheduled Workflows
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'The environment to deploy to'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-        - staging
-        - production
-      logLevel:
-        description: 'Log level for this run'
-        required: false
-        default: 'info'
+    # ... (inputs from above) ...
+  schedule:
+    # Use a tool like crontab.guru to build these schedules
+    # Runs at 02:00 UTC every Monday
+    - cron: '0 2 * * 1'
+    # Runs every hour
